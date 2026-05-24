@@ -3,6 +3,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
          http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.itservices</groupId>
@@ -15,22 +16,34 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!-- Java -->
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
+
+        <!-- Versions -->
         <servlet.version>6.0.0</servlet.version>
         <jsp.version>3.1.0</jsp.version>
+
         <junit.version>5.9.3</junit.version>
         <mockito.version>5.3.1</mockito.version>
-        <bcrypt.version>0.10.2</bcrypt.version>
+
+        <bcrypt.version>0.4</bcrypt.version>
+
         <log4j.version>2.20.0</log4j.version>
-        <jacoco.version>0.8.10</jacoco.version>
+
+        <jacoco.version>0.8.11</jacoco.version>
+
         <maven-compiler.version>3.11.0</maven-compiler.version>
         <maven-surefire.version>3.0.0</maven-surefire.version>
         <maven-war.version>3.4.0</maven-war.version>
         <maven-failsafe.version>3.0.0</maven-failsafe.version>
+
+        <checkstyle.version>3.3.0</checkstyle.version>
     </properties>
 
     <dependencies>
+
         <!-- Servlet API -->
         <dependency>
             <groupId>jakarta.servlet</groupId>
@@ -47,23 +60,24 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- JSTL (JavaServer Pages Standard Tag Library) -->
+        <!-- JSTL -->
         <dependency>
             <groupId>jakarta.servlet.jsp.jstl</groupId>
             <artifactId>jakarta.servlet.jsp.jstl-api</artifactId>
             <version>3.0.0</version>
         </dependency>
+
         <dependency>
             <groupId>org.glassfish.web</groupId>
             <artifactId>jakarta.servlet.jsp.jstl</artifactId>
             <version>3.0.0</version>
         </dependency>
 
-        <!-- Bcrypt for Password Hashing -->
+        <!-- BCrypt -->
         <dependency>
             <groupId>org.mindrot</groupId>
             <artifactId>jbcrypt</artifactId>
-            <version>0.4</version>
+            <version>${bcrypt.version}</version>
         </dependency>
 
         <!-- Logging -->
@@ -72,10 +86,18 @@
             <artifactId>log4j-api</artifactId>
             <version>${log4j.version}</version>
         </dependency>
+
         <dependency>
             <groupId>org.apache.logging.log4j</groupId>
             <artifactId>log4j-core</artifactId>
             <version>${log4j.version}</version>
+        </dependency>
+
+        <!-- Gson -->
+        <dependency>
+            <groupId>com.google.code.gson</groupId>
+            <artifactId>gson</artifactId>
+            <version>2.10.1</version>
         </dependency>
 
         <!-- JUnit 5 -->
@@ -85,6 +107,7 @@
             <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter-engine</artifactId>
@@ -92,13 +115,14 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Mockito for Mocking -->
+        <!-- Mockito -->
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
             <version>${mockito.version}</version>
             <scope>test</scope>
         </dependency>
+
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-junit-jupiter</artifactId>
@@ -106,34 +130,33 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- JSON Processing (for data handling) -->
-        <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>2.10.1</version>
-        </dependency>
     </dependencies>
 
     <build>
+
         <finalName>it-services-portal</finalName>
+
         <plugins>
+
             <!-- Maven Compiler Plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${maven-compiler.version}</version>
+
                 <configuration>
-                    <source>21</source>
-                    <target>21</target>
-                    <encoding>UTF-8</encoding>
+                    <source>${maven.compiler.source}</source>
+                    <target>${maven.compiler.target}</target>
+                    <encoding>${project.build.sourceEncoding}</encoding>
                 </configuration>
             </plugin>
 
-            <!-- Maven Surefire Plugin (Unit Tests) -->
+            <!-- Surefire Plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven-surefire.version}</version>
+
                 <configuration>
                     <includes>
                         <include>**/*Test.java</include>
@@ -142,100 +165,154 @@
                 </configuration>
             </plugin>
 
-            <!-- Maven Failsafe Plugin (Integration Tests) -->
+            <!-- Failsafe Plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-failsafe-plugin</artifactId>
                 <version>${maven-failsafe.version}</version>
             </plugin>
 
-            <!-- JaCoCo for Code Coverage -->
+            <!-- JaCoCo Coverage -->
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>${jacoco.version}</version>
+
                 <executions>
+
+                    <!-- Attach JaCoCo agent -->
                     <execution>
+                        <id>prepare-agent</id>
+
                         <goals>
                             <goal>prepare-agent</goal>
                         </goals>
                     </execution>
+
+                    <!-- Generate XML + HTML Reports -->
                     <execution>
                         <id>report</id>
-                        <phase>test</phase>
+
+                        <phase>verify</phase>
+
                         <goals>
                             <goal>report</goal>
                         </goals>
+
+                        <configuration>
+                            <formats>
+                                <format>XML</format>
+                                <format>HTML</format>
+                            </formats>
+                        </configuration>
                     </execution>
+
+                    <!-- Coverage Quality Gate -->
                     <execution>
                         <id>jacoco-check</id>
+
+                        <phase>verify</phase>
+
                         <goals>
                             <goal>check</goal>
                         </goals>
+
                         <configuration>
+
                             <rules>
+
                                 <rule>
+
                                     <element>PACKAGE</element>
+
                                     <excludes>
                                         <exclude>*Test</exclude>
                                     </excludes>
+
                                     <limits>
+
                                         <limit>
                                             <counter>LINE</counter>
                                             <value>COVEREDRATIO</value>
                                             <minimum>0.80</minimum>
                                         </limit>
+
                                     </limits>
+
                                 </rule>
+
                             </rules>
+
                         </configuration>
                     </execution>
+
                 </executions>
             </plugin>
 
-            <!-- Maven WAR Plugin -->
+            <!-- Checkstyle -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-checkstyle-plugin</artifactId>
+                <version>${checkstyle.version}</version>
+
+                <configuration>
+
+                    <configLocation>google_checks.xml</configLocation>
+
+                    <encoding>${project.build.sourceEncoding}</encoding>
+
+                    <consoleOutput>true</consoleOutput>
+
+                    <failsOnError>false</failsOnError>
+
+                    <linkXRef>false</linkXRef>
+
+                </configuration>
+
+                <executions>
+
+                    <execution>
+                        <id>validate</id>
+
+                        <phase>validate</phase>
+
+                        <goals>
+                            <goal>check</goal>
+                        </goals>
+                    </execution>
+
+                </executions>
+            </plugin>
+
+            <!-- WAR Plugin -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
                 <version>${maven-war.version}</version>
+
                 <configuration>
                     <warName>it-services-portal</warName>
                     <failOnMissingWebXml>false</failOnMissingWebXml>
                 </configuration>
             </plugin>
 
-            <!-- CheckStyle for Code Review -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-checkstyle-plugin</artifactId>
-                <version>3.3.0</version>
-                <configuration>
-                    <configLocation>google_checks.xml</configLocation>
-                    <encoding>UTF-8</encoding>
-                    <consoleOutput>true</consoleOutput>
-                    <failsOnError>false</failsOnError>
-                    <linkXRef>false</linkXRef>
-                </configuration>
-                <executions>
-                    <execution>
-                        <id>validate</id>
-                        <phase>validate</phase>
-                        <goals>
-                            <goal>check</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
         </plugins>
+
     </build>
 
+    <!-- Reporting -->
     <reporting>
+
         <plugins>
+
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>${jacoco.version}</version>
             </plugin>
+
         </plugins>
+
     </reporting>
+
 </project>
