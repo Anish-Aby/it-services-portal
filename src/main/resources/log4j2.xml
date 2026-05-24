@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration packages="org.apache.logging.log4j.core">
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{ISO8601} [%t] %-5p %c{1} - %msg%n"/>
+        </Console>
+        <File name="File" fileName="logs/app.log">
+            <PatternLayout pattern="%d{ISO8601} [%t] %-5p %c{1} - %msg%n"/>
+        </File>
+    </Appenders>
+    <Loggers>
+        <Logger name="com.itservices" level="info" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="File"/>
+        </Logger>
+        <Root level="warn">
+            <AppenderRef ref="Console"/>
+        </Root>
+    </Loggers>
+</Configuration>
