@@ -111,21 +111,15 @@ pipeline {
 
         stage('Build & Push Docker Image') {
             steps {
-
                 echo 'Building Docker image...'
-
                 withDockerRegistry(
                     credentialsId: 'DOCKER_HUB_LOGIN',
                     url: 'https://index.docker.io/v1/'
                 ) {
 
                     sh '''
-                        docker build \
-                          -t docker.io/lerndevops/it-services-portal:latest \
-                          .
-
-                        docker push \
-                          docker.io/lerndevops/it-services-portal:latest
+                        docker build -t docker.io/lerndevops/it-services-portal:latest .
+                        docker push docker.io/lerndevops/it-services-portal:latest
                     '''
                 }
             }
