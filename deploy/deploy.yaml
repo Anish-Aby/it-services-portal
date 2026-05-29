@@ -4,10 +4,10 @@
     - name: clone the cd repo
       git:
        repo: "https://github.com/lerndevops/it-services-portal-cd.git"
-       dest: "~/it-services-portal-cd"
+       dest: "/home/devops/it-services-portal-cd"
        version: "plain-yaml"
        clone: yes
        update: yes
     - name: deploy application 
-      shell: "kubectl apply -f ~/k8s-deploy/releases/dev/*.yaml"
+      shell: "kubectl apply -f /home/devops/it-services-portal-cd/k8s-deploy/releases/dev/*.yaml"
       when: env == "dev"
