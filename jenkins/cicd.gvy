@@ -1,4 +1,3 @@
-
 pipeline {
 
     agent any
@@ -41,7 +40,6 @@ pipeline {
 
             post {
                 always {
-
                     recordIssues(
                         tools: [
                             checkStyle(
@@ -63,7 +61,6 @@ pipeline {
 
             post {
                 always {
-
                     junit '**/target/surefire-reports/*.xml'
                 }
             }
@@ -83,18 +80,14 @@ pipeline {
 
             post {
                 always {
-
                     recordCoverage(
-
                         tools: [
                             [
                                 parser: 'JACOCO',
                                 pattern: '**/target/site/jacoco/jacoco.xml'
                             ]
                         ],
-
                         sourceCodeRetention: 'EVERY_BUILD',
-
                         qualityGates: [
                             [
                                 threshold: 80.0,
@@ -109,18 +102,43 @@ pipeline {
 
         stage('Package') {
             steps {
+
                 echo 'Packaging application...'
+
                 sh 'mvn package -DskipTests'
             }
         }
-    }
-        stage('build & push docker image') {
-	         steps {
-              withDockerRegistry(credentialsId: 'DOCKER_HUB_LOGIN', url: 'https://index.docker.io/v1/') {
-                    sh script: 'cd  $WORKSPACE'
-                    sh script: 'docker build --file Dockerfile --tag docker.io/lerndevops/it-services-portal:$BUILD_NUMBER .'
-                    sh script: 'docker push docker.io/lerndevops/it-services-portal:$BUILD_NUMBER'
-              }	
-           }		
+
+        stage('Build & Push Docker Image') {
+            steps {
+
+                echo 'Building Docker image...'
+
+                withDockerRegistry(
+                    credentialsId: 'DOCKER_HUB_LOGIN',
+                    url: 'https://index.docker.io/v1/'
+                ) {
+
+                    sh '''
+                        docker build \
+                          -t docker.io/lerndevops/it-services-portal:${BUILD_NUMBER} \
+                          .
+
+                        docker push \
+                          docker.io/lerndevops/it-services-portal:${BUILD_NUMBER}
+                    '''
+                }
+            }
         }
+    }
+
+    post {
+        success {
+            echo 'Pipeline completed successfully.'
+        }
+
+        failure {
+            echo 'Pipeline failed.'
+        }
+    }
 }
