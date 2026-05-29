@@ -3,7 +3,7 @@ pipeline {
     agent any
 
     tools {
-        jdk 'JDK21'
+        jdk 'jdk21'
         maven 'Maven3'
     }
 
@@ -118,8 +118,8 @@ pipeline {
                 ) {
 
                     sh '''
-                        docker build -t docker.io/lerndevops/it-services-portal:latest .
-                        docker push docker.io/lerndevops/it-services-portal:latest
+                        docker build -t docker.io/anishaby/it-services-portal:latest .
+                        docker push docker.io/anishaby/it-services-portal:latest
                     '''
                 }
             }
